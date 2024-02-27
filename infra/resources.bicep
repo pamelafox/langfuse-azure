@@ -1,5 +1,4 @@
 param name string
-param homeIP string
 @secure()
 param databasePassword string
 param location string = resourceGroup().location
@@ -7,6 +6,8 @@ param location string = resourceGroup().location
 var resourceToken = toLower(uniqueString(subscription().id, name, location))
 var containerAppName = '${name}-container-app'
 var dbName = '${name}-${resourceToken}-db'
+
+var databaseUsername = 'admin${toLower(uniqueString(subscription().id, name, location))}'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: '${name}-workspace'
@@ -69,40 +70,24 @@ resource containerApp 'Microsoft.App/containerapps@2022-03-01' = {
     template: {
       containers: [
         {
-          image: 'lscr.io/linuxserver/babybuddy:latest'
+          image: 'ghcr.io/langfuse/langfuse:latest'
           name: containerAppName
           env: [
             {
-              name: 'PUID'
-              value: '1000'
+              name: 'DATABASE_URL'
+              value: 'postgres://${databaseUsername}:${databasePassword}@${dbName}.postgres.database.azure.com:5432/langfuse'
             }
             {
-              name: 'PGID'
-              value: '1000'
+              name: 'NEXTAUTH_URL'
+              value: 'https://${containerAppName}.azurewebsites.net'
             }
             {
-              name: 'TZ'
-              value: 'Europe/London'
+              name: 'NEXTAUTH_SECRET'
+              value: 'TODO'
             }
             {
-              name: 'DB_ENGINE'
-              value: 'django.db.backends.postgresql'
-            }
-            {
-              name: 'DB_HOST'
-              value: '${dbName}.postgres.database.azure.com'
-            }
-            {
-              name: 'DB_NAME'
-              value: 'babybuddy'
-            }
-            {
-              name: 'DB_USER'
-              value: 'bb_db_pg_admin'
-            }
-            {
-              name: 'DB_PASSWORD'
-              value: databasePassword
+              name: 'SALT'
+              value: 'TODO'
             }
           ]
           resources: {
@@ -127,8 +112,8 @@ resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-01-20-pr
     tier: 'Burstable'
   }
   properties: {
-    version: '13'
-    administratorLogin: 'bb_db_pg_admin'
+    version: '16'
+    administratorLogin: databaseUsername
     administratorLoginPassword: databasePassword
     storage: {
       storageSizeGB: 32
@@ -151,9 +136,9 @@ resource postgresServer 'Microsoft.DBforPostgreSQL/flexibleServers@2022-01-20-pr
   }
 }
 
-resource postgresServer_babybuddy 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2022-01-20-preview' = {
+resource postgresServer_datase 'Microsoft.DBforPostgreSQL/flexibleServers/databases@2022-01-20-preview' = {
   parent: postgresServer
-  name: 'babybuddy'
+  name: 'langfuse'
   properties: {
     charset: 'UTF8'
     collation: 'en_US.utf8'
@@ -166,24 +151,6 @@ resource postgresServer_AllowAllWindowsAzureIps 'Microsoft.DBforPostgreSQL/flexi
   properties: {
     startIpAddress: '0.0.0.0'
     endIpAddress: '0.0.0.0'
-  }
-}
-
-resource postgresServer_AllowMyIP 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2022-01-20-preview' = {
-  parent: postgresServer
-  name: 'AllowMyIP'
-  properties: {
-    startIpAddress: homeIP
-    endIpAddress: homeIP
-  }
-}
-
-resource postgresServer_FirewallIPAddress_2022_10_11_10_59_35 'Microsoft.DBforPostgreSQL/flexibleServers/firewallRules@2022-01-20-preview' = {
-  parent: postgresServer
-  name: 'FirewallIPAddress_2022-10-11_10-59-35'
-  properties: {
-    startIpAddress: homeIP
-    endIpAddress: homeIP
   }
 }
 

@@ -9,9 +9,6 @@ param name string = 'babybuddy'
 @description('Primary location for all resources')
 param location string = 'eastus'
 
-@description('Home IP address')
-param homeIP string
-
 @secure()
 param databasePassword string
 
@@ -26,7 +23,6 @@ module resources 'resources.bicep' = {
   params: {
     name: name
     location: location
-    homeIP: homeIP
     databasePassword: databasePassword
   }
 }
