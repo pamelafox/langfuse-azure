@@ -10,7 +10,6 @@ azd up
 
 ## TODO:
 
-1. Use Key Vault for secrets
-2. See if we can specify password separately and store in ACA secrets, not env vars.
-3. Bring in AAD authentication optionally
-4. Document how to use in azure-search-openai-demo
+1. Bring in AAD authentication optionally
+2. Document how to use in azure-search-openai-demo
+3. Move to Azure-Samples?
