@@ -8,8 +8,17 @@
       "location": {
         "value": "${AZURE_LOCATION}"
       },
+      "principalId": {
+        "value": "${AZURE_PRINCIPAL_ID}"
+      },
       "databasePassword": {
-        "value": "${DATABASE_PASSWORD}"
+        "value": "$(secretOrRandomPassword ${AZURE_KEY_VAULT_NAME} DATABASEPASSWORD)"
+      },
+      "nextAuthSecret": {
+        "value": "$(secretOrRandomPassword ${AZURE_KEY_VAULT_NAME} NEXTAUTHSECRET)"
+      },
+      "salt": {
+        "value": "$(secretOrRandomPassword ${AZURE_KEY_VAULT_NAME} SALT)"
       }
     }
   }
