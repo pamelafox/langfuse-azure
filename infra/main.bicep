@@ -21,6 +21,11 @@ param principalId string = ''
 @secure()
 param salt string
 
+param useAuthentication bool = false
+param authClientId string = ''
+param authClientSecret string = ''
+param authTenantId string = ''
+
 var databaseAdmin = 'dbadmin'
 var databaseName = 'langfuse'
 var resourceToken = toLower(uniqueString(subscription().id, name, location))
@@ -181,4 +186,4 @@ module keyVaultSecrets './core/security/keyvault-secret.bicep' = [for secret in 
   }
 }]
 
-output webUrl string = containerApp.outputs.uri
+output SERVICE_APP_URI string = containerApp.outputs.uri

@@ -19,6 +19,18 @@
       },
       "salt": {
         "value": "$(secretOrRandomPassword ${AZURE_KEY_VAULT_NAME} SALT)"
+      },
+      "useAuthentication": {
+        "value": "${AZURE_USE_AUTHENTICATION=false}"
+      },
+      "authTenantId": {
+        "value": "${AZURE_AUTH_TENANT_ID}"
+      },
+      "authClientId": {
+        "value": "${AZURE_AUTH_CLIENT_ID}"
+      },
+      "authClientSecret": {
+        "value": "${AZURE_AUTH_CLIENT_SECRET}"
       }
-    }
   }
+}
