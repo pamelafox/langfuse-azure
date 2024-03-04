@@ -143,6 +143,22 @@ module containerApp 'core/host/container-app.bicep' = {
         name: 'SALT'
         secretRef: 'salt'
       }
+      {
+        name: 'AUTH_AZURE_AD_CLIENT_ID'
+        value: authClientId
+      }
+      {
+        name: 'AUTH_AZURE_AD_CLIENT_SECRET'
+        value: authClientSecret
+      }
+      {
+        name: 'AUTH_AZURE_AD_TENANT_ID'
+        value: authTenantId
+      }
+      {
+        name: 'AUTH_DISABLE_USERNAME_PASSWORD'
+        value: useAuthentication ? 'true' : 'false'
+      }
     ]
     secrets: [
       {
